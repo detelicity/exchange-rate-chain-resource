@@ -34,6 +34,7 @@ public class WebServiceStorage implements Storage<String> {
 
                 return result;
             } catch (Exception e) {
+                System.out.println("❌WebServiceStorage: Failed to fetch data for base " + base + ": " + e.getMessage());
                 throw new RuntimeException("Failed to fetch from web service for base " + baseCurrency + 
                                          ": " + e.getMessage());
             }
