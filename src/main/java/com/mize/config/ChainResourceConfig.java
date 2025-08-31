@@ -26,7 +26,7 @@ public class ChainResourceConfig {
     public ChainResource<String> exchangeRateChainResource() {
         // Create storage chain: Memory -> FileSystem -> WebService
         List<Storage<String>> storageChain = List.of(
-            new MemoryStorage<String>(Duration.ofHours(1)),
+            new MemoryStorage<>(Duration.ofHours(1)),
             new FileSystemStorage(cacheFilePath, Duration.ofHours(4)),
             new WebServiceStorage(apiKey)
         );

@@ -18,10 +18,6 @@ repositories {
 	mavenCentral()
 }
 
-application {
-    mainClass = 'com.mize.ExchangeRateApplication'
-}
-
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'

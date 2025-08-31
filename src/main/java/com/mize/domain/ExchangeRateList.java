@@ -2,6 +2,7 @@ package com.mize.domain;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+
 import lombok.Getter;
 
 @Getter
@@ -13,8 +14,8 @@ public class ExchangeRateList {
         this.timestamp = timestamp;
     }
     private  String baseCurrency = null;
-    private  Map<String, Double> rates;
-    private  LocalDateTime timestamp;
+    private final  Map<String, Double> rates;
+    private final  LocalDateTime timestamp;
 
     @Override
     public String toString() {

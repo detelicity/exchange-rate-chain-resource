@@ -1,6 +1,6 @@
 package com.mize.infrastructure;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -20,7 +20,7 @@ public class FileSystemStorage implements Storage<String> {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return Files.readString(filePath);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 throw new RuntimeException("File read failed");
             }
         });
@@ -32,7 +32,7 @@ public class FileSystemStorage implements Storage<String> {
             try {
                 Files.createDirectories(filePath.getParent());
                 Files.writeString(filePath, value);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 throw new RuntimeException("File write failed");
             }
         });
