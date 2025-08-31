@@ -3,6 +3,7 @@ package com.mize.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.CompletableFuture;
@@ -19,8 +20,9 @@ public class ExchangeRateController {
     }
 
     @GetMapping
-    public CompletableFuture<ResponseEntity<String>> getExchangeRates() {
-        return exchangeRateService.getExchangeRates()
+    public CompletableFuture<ResponseEntity<String>> getExchangeRates(
+            @RequestParam(value = "base", defaultValue = "USD") String base) {
+        return exchangeRateService.getExchangeRates(base)
             .thenApply(ResponseEntity::ok)
             .exceptionally(ex -> ResponseEntity.internalServerError().body("Error: " + ex.getMessage()));
     }

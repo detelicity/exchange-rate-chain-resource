@@ -11,32 +11,71 @@ public class ChainResource<T> {
     }
 
     public CompletableFuture<T> getValue() {
-        return getValueFromStorage(0);
+        return getValueFromStorage(0, null);
     }
 
-    private CompletableFuture<T> getValueFromStorage(int index) {
+    public CompletableFuture<T> getValue(String base) {
+        return getValueFromStorage(0, base);
+    }
+
+    private CompletableFuture<T> getValueFromStorage(int index, String base) {
         if (index >= storages.size()) {
             return CompletableFuture.failedFuture(new RuntimeException("No storage available"));
         }
 
         Storage<T> storage = storages.get(index);
+        String sourceName = storage.getClass().getSimpleName();
         
-        return storage.getValue().thenCompose(value -> {
-            // If we got a value, propagate it up and return it
-            return propagateValueUp(value, index - 1).thenApply(v -> value);
+        CompletableFuture<T> valueFuture;
+        
+        // Use base-aware method if base is provided
+        if (base != null) {
+            valueFuture = storage.getValue(base);
+        } else {
+            valueFuture = storage.getValue();
+        }
+        
+        return valueFuture.thenCompose(value -> {
+            // Add source information to the value
+            T valueWithSource = addSourceInfo(value, sourceName);
+            // Propagate value up the chain with base parameter
+            return propagateValueUp(valueWithSource, index - 1, base).thenApply(v -> valueWithSource);
         }).exceptionally(ex -> {
             // If this storage failed, try the next one
-            return getValueFromStorage(index + 1).join();
+            return getValueFromStorage(index + 1, base).join();
         });
     }
 
-    private CompletableFuture<Void> propagateValueUp(T value, int toIndex) {
+    private CompletableFuture<Void> propagateValueUp(T value, int toIndex, String base) {
         if (toIndex < 0) return CompletableFuture.completedFuture(null);
         
         Storage<T> storage = storages.get(toIndex);
         if (storage.canWrite()) {
-            return storage.setValue(value);
+            // Use base-aware method if base is provided
+            if (base != null) {
+                return storage.setValue(value, base);
+            } else {
+                return storage.setValue(value);
+            }
         }
-        return propagateValueUp(value, toIndex - 1);
+        return propagateValueUp(value, toIndex - 1, base);
+    }
+
+    @SuppressWarnings("unchecked")
+    private T addSourceInfo(T value, String sourceName) {
+        if (value instanceof String) {
+            String stringValue = (String) value;
+            // Remove existing source if present to avoid duplication
+            stringValue = stringValue.replaceAll(",\"source\":\"[^\"]*\"", "");
+            // Add source information
+            if (stringValue.endsWith("}")) {
+                stringValue = stringValue.substring(0, stringValue.length() - 1) + 
+                            ",\"source\":\"" + sourceName + "\"}";
+            } else {
+                stringValue += " - source: " + sourceName;
+            }
+            return (T) stringValue;
+        }
+        return value;
     }
 }
