@@ -73,3 +73,7 @@ The solution implements the Chain of Responsibility pattern where each storage l
 - **Graceful Degradation**: If one storage fails, chain continues to next
 - **Exception Propagation**: Proper error messages through CompletableFuture
 - **Circuit Breaker Pattern**: Automatic fallback through storage layers
+
+- ## Postman Tests:
+- <img width="837" height="775" alt="image" src="https://github.com/user-attachments/assets/fb6558a5-d6a3-4028-9ef4-97ec9b54ea20" />
+
