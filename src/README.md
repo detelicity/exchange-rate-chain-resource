@@ -45,43 +45,6 @@ The solution implements the Chain of Responsibility pattern where each storage l
 - **Purpose**: Ground truth data source
 - **Implementation**: REST API call to OpenExchangeRates.org
 
-## Key Algorithms
-
-### Chain Resolution Logic
-```java
-public CompletableFuture<T> getValue() {
-    return getValueFromStorage(0); // Start with first storage
-}
-
-private CompletableFuture<T> getValueFromStorage(int index) {
-    if (index >= storages.size()) {
-        return CompletableFuture.failedFuture(new RuntimeException("No storage available"));
-    }
-
-    Storage<T> storage = storages.get(index);
-    
-    return storage.getValue().thenCompose(value -> {
-        // Success: propagate value up the chain and return
-        return propagateValueUp(value, index - 1).thenApply(v -> value);
-    }).exceptionally(ex -> {
-        // Failure: try next storage in chain
-        return getValueFromStorage(index + 1).join();
-    });
-}
-```
-
-### Value Propagation
-```java
-private CompletableFuture<Void> propagateValueUp(T value, int toIndex) {
-    if (toIndex < 0) return CompletableFuture.completedFuture(null);
-    
-    Storage<T> storage = storages.get(toIndex);
-    if (storage.canWrite()) {
-        return storage.setValue(value); // Cache in upper layers
-    }
-    return propagateValueUp(value, toIndex - 1);
-}
-```
 
 ## Data Flow
 
@@ -104,38 +67,9 @@ private CompletableFuture<Void> propagateValueUp(T value, int toIndex) {
                                             └── ❌ Failure → Error Response
 ```
 
-## Performance Characteristics
-
-- **Best Case**: ~1ms (memory hit)
-- **Average Case**: ~10-50ms (file system hit)  
-- **Worst Case**: ~500-2000ms (API call + propagation)
-
-## Configuration Requirements
-
-```properties
-# application.properties
-openexchangerates.api.key=your_api_key_here
-exchange.cache.file=./data/exchange-rates.json
-```
 
 ## Error Handling Strategy
 
 - **Graceful Degradation**: If one storage fails, chain continues to next
 - **Exception Propagation**: Proper error messages through CompletableFuture
 - **Circuit Breaker Pattern**: Automatic fallback through storage layers
-
-## Testing Considerations
-
-- Unit tests for each storage implementation
-- Integration tests for chain behavior
-- Mock external API dependencies
-- Test expiration logic and propagation
-
-## Scalability Features
-
-- **Thread-Safe**: Atomic operations for concurrent access
-- **Memory Efficient**: Automatic cache expiration
-- **Extensible**: Easy to add new storage implementations
-- **Configurable**: Expiration times adjustable via configuration
-
-This implementation provides a production-ready solution that balances performance, reliability, and maintainability while meeting all specified requirements.
