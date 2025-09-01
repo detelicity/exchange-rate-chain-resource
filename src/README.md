@@ -101,16 +101,17 @@ By isolating responsibilities across layers, the system remains easier to extend
 To validate the solution, I tested it with different request scenarios using Postman.
 
 Example Requests (Screenshots Placeholder) 
-	1.	✅ Fetching latest exchange rates with base=USD
+1.	✅ Fetching latest exchange rates with base=USD
     <img width="841" height="646" alt="image" src="https://github.com/user-attachments/assets/963503c5-7b3c-47f8-9c99-21536c887075" />
-    1.1  ✅ Fetching latest exchange rates WITHOUT passing base parameter
+	
+ 1.1  ✅ Fetching latest exchange rates WITHOUT passing base parameter
     <img width="841" height="646" alt="image" src="https://github.com/user-attachments/assets/5cb147b8-b950-4566-b813-24f6cfc6fca9" />
 
-	2.	✅ Retrieving cached data from MemoryStorage after first request
-     <img width="841" height="646" alt="image" src="https://github.com/user-attachments/assets/50e4e4a0-72f4-47de-a184-ff0b4d0950a1" />
+2.	✅ Retrieving cached data from MemoryStorage after first request
+<img width="841" height="646" alt="image" src="https://github.com/user-attachments/assets/50e4e4a0-72f4-47de-a184-ff0b4d0950a1" />
 
-	3.	✅ Fallback to FileSystemStorage when memory cache expired
-     <img width="841" height="646" alt="image" src="https://github.com/user-attachments/assets/532b040a-e1ac-401f-9f0b-843adb1093a0" />
+3.	✅ Fallback to FileSystemStorage when memory cache expired
+<img width="841" height="646" alt="image" src="https://github.com/user-attachments/assets/532b040a-e1ac-401f-9f0b-843adb1093a0" />
 
 API Limitation: Base Currency Restriction
 
