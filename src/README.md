@@ -120,7 +120,7 @@ When testing with different base currencies (e.g., base=EUR), the following erro
 
 <img width="841" height="374" alt="image" src="https://github.com/user-attachments/assets/398f7abf-d9c2-4034-9700-05cb0f59af58" />
 
-(for future improvements id add an Error Handler to return the right exception, but for the purpose of understanding what happened I added a print line in the code and found out the following:
+NOTE: for future improvements id add an Error Handler to return the right exception, but for the purpose of understanding what happened I added a print line in the code and found out the following:
 
 <img width="442" height="147" alt="image" src="https://github.com/user-attachments/assets/6f54bc14-2ed2-4fa3-a319-d563247b6257" />
 
